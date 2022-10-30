@@ -18,9 +18,11 @@ var completedTasksHolder=document.getElementById("completed-tasks");//completed-
 var createNewTaskElement=function(taskString){
 
     var listItem=document.createElement("li");
+    listItem.classList.add("list-item");
 
     //input (checkbox)
     var checkBox=document.createElement("input");//checkbx
+    checkBox.classList.add("input-checkbox");
     //label
     var label=document.createElement("label");//label
     //input (text)
@@ -28,9 +30,11 @@ var createNewTaskElement=function(taskString){
     //button.edit
     var editButton=document.createElement("button");//edit button
 
+
     //button.delete
     var deleteButton=document.createElement("button");//delete button
     var deleteButtonImg=document.createElement("img");//delete button image
+    deleteButtonImg.classList.add("button-img");
 
     label.innerText=taskString;
     label.className='task';
@@ -39,11 +43,12 @@ var createNewTaskElement=function(taskString){
     checkBox.type="checkbox";
     editInput.type="text";
     editInput.className="task";
+    
 
     editButton.innerText="Edit"; //innerText encodes special characters, HTML does not.
-    editButton.className="edit";
+    editButton.className="edit button";
 
-    deleteButton.className="delete";
+    deleteButton.className="delete button";
     deleteButtonImg.src='./remove.svg';
     deleteButton.appendChild(deleteButtonImg);
 
@@ -70,7 +75,11 @@ var addTask=function(){
     bindTaskEvents(listItem, taskCompleted);
 
     taskInput.value="";
-
+    for (let elem of listItem.children) {
+      if(elem.type == 'text'){
+        elem.classList.add("list-item-input-hidden");
+      }
+    }
 }
 
 //Edit an existing task.
@@ -93,13 +102,33 @@ var editTask=function(){
         //label becomes the inputs value.
         label.innerText=editInput.value;
         editBtn.innerText="Edit";
+        for (let elem of listItem.children) {
+          if(elem.type == 'text'){
+            elem.classList.remove("text-input-edit");
+            elem.classList.add("list-item-input-hidden")
+          }
+          if(elem.nodeName == 'LABEL'){
+            elem.classList.remove("label-hidden");
+          }
+        }
     }else{
         editInput.value=label.innerText;
+        editInput.classList.add("text-input")
         editBtn.innerText="Save";
+        for (let elem of listItem.children) {
+          if(elem.type == 'text'){
+            elem.classList.add("text-input-edit");
+            elem.classList.remove("list-item-input-hidden")
+          }
+          if(elem.nodeName == 'LABEL'){
+            elem.classList.add("label-hidden");
+          }
+        }
     }
 
     //toggle .editmode on the parent.
     listItem.classList.toggle("edit-mode");
+    
 };
 
 
@@ -121,6 +150,13 @@ var taskCompleted=function(){
 
     //Append the task list item to the #completed-tasks
     var listItem=this.parentNode;
+    console.log(listItem.children)
+    for (let elem of listItem.children) {
+      console.log(typeof elem.nodeName)
+      if(elem.nodeName == 'LABEL'){
+        elem.classList.add("complete-task-label");
+      }
+    }
     completedTasksHolder.appendChild(listItem);
     bindTaskEvents(listItem, taskIncomplete);
 
@@ -135,6 +171,11 @@ var taskIncomplete=function(){
     var listItem=this.parentNode;
     incompleteTaskHolder.appendChild(listItem);
     bindTaskEvents(listItem,taskCompleted);
+    for (let elem of listItem.children) {
+      if(elem.nodeName == 'LABEL'){
+        elem.classList.remove("complete-task-label");
+      }
+    }
 }
 
 
